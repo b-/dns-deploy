@@ -1,0 +1,12 @@
+[[stack]]
+name = "dns-deploy"
+tags = ["dns", "instance"]
+[stack.config]
+server = "dns-server"
+git_account = "b-"
+repo = "b-/dns-deploy"
+reclone = true
+file_paths = ["compose.yaml"]
+environment = """
+DNS_SERVER_ADMIN_PASSWORD=[[OP__KOMODO__TECHNITIUM_DNS__PASSWORD]]
+"""
