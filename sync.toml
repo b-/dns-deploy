@@ -15,7 +15,7 @@ tags = ["dns", "instances"]
 [resource_sync.config]
 repo = "b-/dns-deploy"
 git_account = "b-"
-resource_path = ["instances.toml"]
+resource_path = ["deploy.toml"]
 managed = true
 delete = true
 match_tags = ["dns", "instance"]
