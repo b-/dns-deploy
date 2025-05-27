@@ -3,7 +3,7 @@ name = "dns-deploy-sync"
 tags = ["dns", "sync"]
 [resource_sync.config]
 repo = "b-/dns-deploy"
-git_account = "b-"
+git_account = "b-" 
 resource_path = ["sync.toml"]
 managed = true
 delete = true
