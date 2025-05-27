@@ -8,7 +8,8 @@ configs:
           name regex (.*)\.ts\.ibeep\.com$ {1}.shark-perch.ts.net
           answer name (.*)\.shark-perch\.ts\.net\.$ {1}.ts.ibeep.com
         }
-    proxy . dns://100.100.100.100
+        proxy . dns://100.100.100.100
+      }
 
 x-ts-sidecar: &ts-sidecar
   # volumes:
