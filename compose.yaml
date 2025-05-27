@@ -1,5 +1,63 @@
+configs:
+  coredns:
+    content: |
+      .:53 {
+        errors
+        health
+        rewrite stop {
+          name regex (.*)\.ts\.ibeep\.com$ {1}.shark-perch.ts.net
+          answer name (.*)\.shark-perch\.ts\.net\.$ {1}.ts.ibeep.com
+        }
+    proxy . dns://100.100.100.100
+
+x-ts-sidecar: &ts-sidecar
+  # volumes:
+  #   - ts_state:/ts_state
+  image: tailscale/tailscale:latest
+  environment: &ts-env
+    TS_AUTHKEY: ${TS_AUTHKEY}
+    TS_EXTRA_ARGS: "--advertise-tags=tag:docker"
+    #TS_USERSPACE: false
+    TS_ENABLE_HEALTH_CHECK: true
+    TS_LOCAL_ADDR_PORT: 127.0.0.1:41234
+    TS_STATE: "mem:"
+    #TS_SERVE_CONFIG: /config/serve.json
+    #TS_AUTHKEY: tskey-auth-kS5WUC4XYe11CNTRL-AT7DucG3DnhrX8j6rmPdhhcuN2mRerBk
+    #TS_HOSTNAME: generic-sidecar
+  #    ports:
+  #      - "8120"
+  #    devices:
+  #      - /dev/net/tun:/dev/net/tun # Network configuration for Tailscale to work
+  #    cap_add:
+  #      - net_admin # Tailscale requirement
+  #      - sys_module # Tailscale requirement
+  healthcheck:
+    test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz"] # Check Tailscale has a Tailnet IP and is operational
+    interval: 1m # How often to perform the check
+    timeout: 10s # Time to wait for the check to succeed
+    retries: 3 # Number of retries before marking as unhealthy
+    start_period: 10s # Time to wait before starting health checks
+  restart: always
 services:
-  dns-server:
+  coredns-ts:
+    <<: *ts-sidecar
+    environment:
+      <<: *ts-env
+      TS_HOSTNAME: "coredns"
+    extra_hosts:
+      - host.docker.internal=host-gateway
+    #ports:
+    #  - 80:80
+  coredns:
+    network_mode: service:coredns-ts
+    image: docker.io/library/coredns:latest
+    configs:
+      - coredns
+    command:
+      - -conf
+      - /root/coredns
+
+  technitium-dns:
     container_name: dns-server
     hostname: dns-server
     image: technitium/dns-server:latest
