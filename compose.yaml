@@ -1,7 +1,7 @@
 configs:
   Corefile:
     content: |
-      .:53 {
+      .:54 {
         errors
         health
         rewrite stop {
@@ -40,17 +40,17 @@ x-ts-sidecar: &ts-sidecar
     start_period: 10s # Time to wait before starting health checks
   restart: always
 services:
-  coredns-ts:
-    <<: *ts-sidecar
-    environment:
-      <<: *ts-env
-      TS_HOSTNAME: "coredns"
-    extra_hosts:
-      - host.docker.internal=host-gateway
-    #ports:
-    #  - 80:80
+  #coredns-ts:
+  #  <<: *ts-sidecar
+  #  environment:
+  #    <<: *ts-env
+  #    TS_HOSTNAME: "coredns"
+  #  extra_hosts:
+  #    - host.docker.internal=host-gateway
+  #  #ports:
+  #  #  - 80:80
   coredns:
-    network_mode: service:coredns-ts
+    network_mode: host
     image: docker.io/coredns/coredns:latest
     configs:
       - Corefile
@@ -81,7 +81,7 @@ services:
       # - DNS_SERVER_ENABLE_BLOCKING=false #Sets the DNS server to block domain names using Blocked Zone and Block List Zone.
       # - DNS_SERVER_ALLOW_TXT_BLOCKING_REPORT=false #Specifies if the DNS Server should respond with TXT records containing a blocked domain report for TXT type requests.
       # - DNS_SERVER_BLOCK_LIST_URLS= #A comma separated list of block list URLs.
-      - DNS_SERVER_FORWARDERS=coredns,127.0.0.11 #Comma separated list of forwarder addresses.
+      - DNS_SERVER_FORWARDERS=localhost:54 #Comma separated list of forwarder addresses.
       # - DNS_SERVER_FORWARDER_PROTOCOL=Tcp #Forwarder protocol options: Udp, Tcp, Tls, Https, HttpsJson.
       - DNS_SERVER_LOG_USING_LOCAL_TIME=true #Enable this option to use local time instead of UTC for logging.
     volumes:
