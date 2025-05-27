@@ -1,14 +1,14 @@
 configs:
-  coredns:
+  Corefile:
     content: |
       .:53 {
         errors
         health
         rewrite stop {
-          name regex (.*)\.ts\.ibeep\.com$ {1}.shark-perch.ts.net
+          name regex (.*)\.ts\.ibeep\.com\.$ {1}.shark-perch.ts.net
           answer name (.*)\.shark-perch\.ts\.net\.$ {1}.ts.ibeep.com
         }
-        proxy . dns://100.100.100.100
+        forward . dns://100.100.100.100
       }
 
 x-ts-sidecar: &ts-sidecar
@@ -50,13 +50,13 @@ services:
     #ports:
     #  - 80:80
   coredns:
-    network_mode: service:coredns-ts
+    #network_mode: service:coredns-ts
     image: docker.io/coredns/coredns:latest
     configs:
-      - coredns
-    command:
-      - -conf
-      - /root/coredns
+      - Corefile
+    #command:
+    #  - -conf
+    #  - /coredns
 
   technitium-dns:
     container_name: dns-server
@@ -81,7 +81,7 @@ services:
       # - DNS_SERVER_ENABLE_BLOCKING=false #Sets the DNS server to block domain names using Blocked Zone and Block List Zone.
       # - DNS_SERVER_ALLOW_TXT_BLOCKING_REPORT=false #Specifies if the DNS Server should respond with TXT records containing a blocked domain report for TXT type requests.
       # - DNS_SERVER_BLOCK_LIST_URLS= #A comma separated list of block list URLs.
-      # - DNS_SERVER_FORWARDERS=1.1.1.1, 8.8.8.8 #Comma separated list of forwarder addresses.
+      - DNS_SERVER_FORWARDERS=coredns #Comma separated list of forwarder addresses.
       # - DNS_SERVER_FORWARDER_PROTOCOL=Tcp #Forwarder protocol options: Udp, Tcp, Tls, Https, HttpsJson.
       - DNS_SERVER_LOG_USING_LOCAL_TIME=true #Enable this option to use local time instead of UTC for logging.
     volumes:
