@@ -7,6 +7,7 @@ git_account = "b-"
 repo = "b-/dns-deploy"
 reclone = true
 file_paths = ["compose.yaml"]
+extra_args = ["--remove-orphans"]
 environment = """
 DNS_SERVER_ADMIN_PASSWORD=[[OP__KOMODO__TECHNITIUM_DNS__PASSWORD]]
 TS_AUTHKEY = [[OP__KOMODO__TAILSCALE_OP__CLIENT_SECRET]]?ephemeral=true
