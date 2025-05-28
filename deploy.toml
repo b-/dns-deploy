@@ -1,5 +1,5 @@
 [[stack]]
-name = "dns-deploy"
+name = "dns-deployment-home"
 tags = ["dns", "instance"]
 [stack.config]
 server = "dns-server"
